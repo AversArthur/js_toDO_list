@@ -1,38 +1,43 @@
-console.log("hi");
+const inputBox = document.getElementById("input-box");
+const inputContainer = document.getElementById("list-container");
 
-const inputData = document.querySelector(".todo-input input");
-const toDoList = document.querySelector(".todo-list");
-const button = document.querySelector(".todo-input button");
-
-function addToDoList() {
-  const inputDataValue = inputData.value;
-  if (inputDataValue.trim() === "") {
-    alert("Task cannot be empty!");
-    return;
+function addTask() {
+  if (inputBox.value === "") {
+    alert("Please write task");
+  } else {
+    let li = document.createElement("li");
+    li.innerHTML = inputBox.value;
+    inputContainer.appendChild(li);
+    let spen = document.createElement("span");
+    spen.innerHTML = "\u00d7";
+    li.appendChild(spen);
   }
-
-  const li = document.createElement("li");
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.className = "delete-btn";
-  deleteBtn.innerHTML = "Delete";
-  deleteBtn.addEventListener("click", () => {
-    toDoList.removeChild(li);
-  });
-
-  const span = document.createElement("span");
-  span.className = "task-text";
-  span.innerHTML = inputDataValue;
-
-  li.appendChild(deleteBtn);
-  li.appendChild(span);
-
-  toDoList.appendChild(li);
-  inputData.value = "";
+  inputBox.value = "";
+  saveData();
 }
-inputData.addEventListener("keydown", (el) => {
-  if (el.key === "Enter") {
-    addToDoList();
+inputBox.addEventListener('keydown', (el) =>{
+  if (el.key === 'Enter') {
+    addTask();
   }
 });
-button.addEventListener("click", addToDoList);
+inputContainer.addEventListener(
+  "click",(e) => {
+    if (e.target.tagName === "LI") {
+      e.target.classList.toggle("checked");
+      saveData();
+    } else if (e.target.tagName === "SPAN") {
+      e.target.parentElement.remove();
+      saveData();
+    }
+  },
+  false
+);
+
+function saveData() {
+  localStorage.setItem("data", inputContainer.innerHTML);
+}
+
+function restoreData() {
+  inputContainer.innerHTML = localStorage.getItem("data");
+}
+restoreData()
